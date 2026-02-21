@@ -11,10 +11,12 @@ services:
       redis:
         condition: service_started
     ports:
-      - 80:80
+      - 8282:80
     stop_grace_period: 60s
     volumes:
-      - ~/sharelatex_data:/var/lib/overleaf
+      - ${CONFIG}/sharelatex_data:/var/lib/overleaf
+      - texlive_data:/usr/local/texlive
+      #
       ########################################################################
       ####  Server Pro: Uncomment the following line to mount the docker  ####
       ####             socket, required for Sibling Containers to work    ####
@@ -41,7 +43,7 @@ services:
       ## Set for SSL via nginx-proxy
       #VIRTUAL_HOST: 103.112.212.22
 
-      # OVERLEAF_SITE_URL: http://overleaf.example.com
+      OVERLEAF_SITE_URL: http://simon-pc:8282
       # OVERLEAF_NAV_TITLE: Overleaf Community Edition
       # OVERLEAF_HEADER_IMAGE_URL: http://example.com/mylogo.png
       # OVERLEAF_ADMIN_EMAIL: support@it.com
@@ -76,14 +78,14 @@ services:
       ## so the following environment variables must be commented out to avoid compile issues.
       ##
       ## Sandboxed Compiles: https://docs.overleaf.com/on-premises/configuration/overleaf-toolkit/server-pro-only-configuration/sandboxed-compiles
-      SANDBOXED_COMPILES: "true"
+      # SANDBOXED_COMPILES: "true"
       ### Bind-mount source for /var/lib/overleaf/data/compiles inside the container.
-      SANDBOXED_COMPILES_HOST_DIR_COMPILES: "/home/user/sharelatex_data/data/compiles"
+      # SANDBOXED_COMPILES_HOST_DIR_COMPILES: "/home/user/sharelatex_data/data/compiles"
       ### Bind-mount source for /var/lib/overleaf/data/output inside the container.
-      SANDBOXED_COMPILES_HOST_DIR_OUTPUT: "/home/user/sharelatex_data/data/output"
+      # SANDBOXED_COMPILES_HOST_DIR_OUTPUT: "/home/user/sharelatex_data/data/output"
       ### Backwards compatibility (before Server Pro 5.5)
-      DOCKER_RUNNER: "true"
-      SANDBOXED_COMPILES_SIBLING_CONTAINERS: "true"
+      # DOCKER_RUNNER: "true"
+      # SANDBOXED_COMPILES_SIBLING_CONTAINERS: "true"
 
       ## Works with test LDAP server shown at bottom of docker compose
       # OVERLEAF_LDAP_URL: 'ldap://ldap:389'
@@ -99,18 +101,23 @@ services:
       # OVERLEAF_TEMPLATES_USER_ID: "578773160210479700917ee5"
       # OVERLEAF_NEW_PROJECT_TEMPLATE_LINKS: '[ {"name":"All Templates","url":"/templates/all"}]'
 
-      # OVERLEAF_PROXY_LEARN: "true"
-
+      OVERLEAF_PROXY_LEARN: "true"
+      # OVERLEAF_LISTEN_IP: "0.0.0.0"
+      PUID: ${PUID}
+      PGID: ${PGID}
   mongo:
     restart: always
-    image: mongo:6.0
+    image: mongo:8.0
     container_name: mongo
     command: "--replSet overleaf"
     volumes:
-      - ~/mongo_data:/data/db
+      - ${CONFIG}/mongo_data:/data/db
       - ./bin/shared/mongodb-init-replica-set.js:/docker-entrypoint-initdb.d/mongodb-init-replica-set.js
     environment:
       MONGO_INITDB_DATABASE: sharelatex
+      PUID: ${PUID}
+      PGID: ${PGID}
+
     extra_hosts:
       # Required when using the automatic database setup for initializing the replica set.
       # This override is not needed when running the setup after starting up mongo.
@@ -126,7 +133,10 @@ services:
     image: redis:6.2
     container_name: redis
     volumes:
-      - ~/redis_data:/data
+      - ${CONFIG}/redis_data:/data
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
 
   # ldap:
   #    restart: always
@@ -146,4 +156,6 @@ services:
   #       - "443:443"
   #     volumes:
   #       - /var/run/docker.sock:/tmp/docker.sock:ro
-  #       - /home/overleaf/tmp:/etc/nginx/certs
+  #       - /home/overleaf/tmp:/etc/nginx/cert
+volumes:
+  texlive_data:
