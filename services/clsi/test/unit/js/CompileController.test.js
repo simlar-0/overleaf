@@ -144,10 +144,11 @@ describe('CompileController', () => {
               buildId: ctx.buildId,
               outputUrlPrefix: '/zone/b',
               outputFiles: ctx.output_files.map(file => ({
-                url: `${ctx.Settings.apis.clsi.url}/project/${ctx.project_id}/build/${file.build}/output/${file.path}`,
+                url: `${ctx.Settings.apis.clsi.downloadHost}/project/${ctx.project_id}/build/${file.build}/output/${file.path}`,
                 ...file,
               })),
               clsiCacheShard: undefined,
+              baseHistoryVersion: undefined,
             },
           })
           .should.equal(true)
@@ -172,10 +173,11 @@ describe('CompileController', () => {
               buildId: ctx.buildId,
               outputUrlPrefix: '',
               outputFiles: ctx.output_files.map(file => ({
-                url: `${ctx.Settings.apis.clsi.url}/project/${ctx.project_id}/build/${file.build}/output/${file.path}`,
+                url: `${ctx.Settings.apis.clsi.downloadHost}/project/${ctx.project_id}/build/${file.build}/output/${file.path}`,
                 ...file,
               })),
               clsiCacheShard: undefined,
+              baseHistoryVersion: undefined,
             },
           })
           .should.equal(true)
@@ -220,10 +222,11 @@ describe('CompileController', () => {
             outputUrlPrefix: '/zone/b',
             buildId: ctx.buildId,
             outputFiles: ctx.output_files.map(file => ({
-              url: `${ctx.Settings.apis.clsi.url}/project/${ctx.project_id}/build/${file.build}/output/${file.path}`,
+              url: `${ctx.Settings.apis.clsi.downloadHost}/project/${ctx.project_id}/build/${file.build}/output/${file.path}`,
               ...file,
             })),
             clsiCacheShard: undefined,
+            baseHistoryVersion: undefined,
           },
         })
       })
@@ -268,10 +271,11 @@ describe('CompileController', () => {
             timings: ctx.timings,
             outputUrlPrefix: '/zone/b',
             outputFiles: ctx.output_files.map(file => ({
-              url: `${ctx.Settings.apis.clsi.url}/project/${ctx.project_id}/build/${file.build}/output/${file.path}`,
+              url: `${ctx.Settings.apis.clsi.downloadHost}/project/${ctx.project_id}/build/${file.build}/output/${file.path}`,
               ...file,
             })),
             clsiCacheShard: undefined,
+            baseHistoryVersion: undefined,
           },
         })
       })
@@ -304,6 +308,7 @@ describe('CompileController', () => {
               stats: ctx.stats,
               timings: ctx.timings,
               clsiCacheShard: undefined,
+              baseHistoryVersion: undefined,
             },
           })
           .should.equal(true)
@@ -339,6 +344,7 @@ describe('CompileController', () => {
               // JSON.stringify will omit these undefined values
               buildId: undefined,
               clsiCacheShard: undefined,
+              baseHistoryVersion: undefined,
             },
           })
           .should.equal(true)
@@ -373,6 +379,7 @@ describe('CompileController', () => {
               // JSON.stringify will omit these undefined values
               buildId: undefined,
               clsiCacheShard: undefined,
+              baseHistoryVersion: undefined,
             },
           })
           .should.equal(true)
@@ -405,6 +412,7 @@ describe('CompileController', () => {
               // JSON.stringify will omit these undefined values
               buildId: undefined,
               clsiCacheShard: undefined,
+              baseHistoryVersion: undefined,
             },
           })
           .should.equal(true)

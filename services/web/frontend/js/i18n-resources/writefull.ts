@@ -11,6 +11,7 @@ const en = {
     generating: 'Generating',
     regenerate: 'Regenerate',
     regenerating: 'Regenerating',
+    retry: 'Retry',
     cancel: 'Cancel',
     yes: 'Yes',
     no: 'No',
@@ -126,9 +127,10 @@ const en = {
     'suggestion-card.banner.quick-guide.welcome': 'Welcome to Writefull!',
     'suggestion-card.banner.quick-guide.start':
       'Click here to start a quick guide',
-    'suggestion-card.banner.non-english.question': 'Is your text non-English?',
-    'suggestion-card.banner.non-english.yes': 'Yes, switch to GPT.',
-    'suggestion-card.banner.non-english.no': 'No, continue with English.',
+    'suggestion-card.banner.non-english.introduction':
+      "To view AI-powered language suggestions you'll need to use the GPT model.",
+    'suggestion-card.banner.non-english.choose-model': 'Choose model',
+    'suggestion-card.banner.non-english.disable': 'Disable',
     'suggestion-card.track-changes.show': 'Show track changes',
     'suggestion-card.track-changes.hide': 'Hide track changes',
     'suggestion-card.information-tooltip':
@@ -156,6 +158,9 @@ const en = {
     'ai-context-menu.select-text-tooltip':
       'Select text to access these options',
     'ai-context-menu.paraphrase': 'Paraphrase',
+    'ai-context-menu.rephrase': 'Rephrase',
+    'ai-context-menu.shorten': 'Shorten',
+    'ai-context-menu.more-scientific': 'More scientific',
     'ai-context-menu.change-style': 'Change style',
     'ai-context-menu.summarize': 'Summarize',
     'ai-context-menu.explain': 'Explain',
@@ -480,6 +485,8 @@ const en = {
       'You’ve hit your Writefull quota',
     'citations-reviewer.chat.backend-quota-error.freemium.body':
       'To ensure fair access for all users, free accounts have a usage limit. You can check for citations again in __remainingTime__. Upgrade to Premium to unlock the full power of Writefull.',
+    'citations-reviewer.chat.navigation.publications': 'Suggested papers',
+    'citations-reviewer.chat.navigation.custom-search': 'Search',
     'citations-reviewer.chat.non-english-error.title':
       'Citation Reviewer only works on documents written in English',
     'citations-reviewer.chat.non-english-error.body':
@@ -487,6 +494,11 @@ const en = {
     'citations-reviewer.chat.non-english-error.yes':
       'Yes, run citation reviewer',
     'citations-reviewer.chat.non-english-error.no': 'No, return to main menu',
+    'paywall.title': 'You’ve hit your Overleaf AI limit',
+    'paywall.body':
+      'Upgrade for unlimited access to all AI features or check back at __date__, __time__.',
+    'paywall.upgrade': 'Upgrade',
+    'paywall.hide': 'Hide for now',
   },
 } as const
 
@@ -502,6 +514,7 @@ const es = {
     generating: 'Generando',
     regenerate: 'Regenerar',
     regenerating: 'Regenerando',
+    retry: 'Reintentar',
     cancel: 'Cancelar',
     yes: 'Sí',
     no: 'No',
@@ -624,10 +637,10 @@ const es = {
     'suggestion-card.banner.quick-guide.welcome': '¡Bienvenido a Writefull!',
     'suggestion-card.banner.quick-guide.start':
       'Haga clic aquí para una guía rápida',
-    'suggestion-card.banner.non-english.question':
-      '¿Tu texto está en otro idioma que no sea inglés?',
-    'suggestion-card.banner.non-english.yes': 'Sí, cambiar a GPT.',
-    'suggestion-card.banner.non-english.no': 'No, continuar con inglés.',
+    'suggestion-card.banner.non-english.introduction':
+      'Para ver sugerencias de lenguaje impulsadas por IA, necesitarás usar el modelo GPT.',
+    'suggestion-card.banner.non-english.choose-model': 'Elegir modelo',
+    'suggestion-card.banner.non-english.disable': 'Deshabilitar',
     'suggestion-card.track-changes.show': 'Mostrar cambios',
     'suggestion-card.track-changes.hide': 'Ocultar cambios',
     'suggestion-card.information-tooltip':
@@ -660,6 +673,9 @@ const es = {
     'ai-context-menu.select-text-tooltip':
       'Seleccione texto para acceder a estas opciones',
     'ai-context-menu.paraphrase': 'Parafrasear',
+    'ai-context-menu.rephrase': 'Reformular',
+    'ai-context-menu.shorten': 'Acortar',
+    'ai-context-menu.more-scientific': 'Más científico',
     'ai-context-menu.change-style': 'Cambiar estilo',
     'ai-context-menu.summarize': 'Resumir',
     'ai-context-menu.explain': 'Explicar',
@@ -992,6 +1008,8 @@ const es = {
       'Has agotado tu cuota de Writefull',
     'citations-reviewer.chat.backend-quota-error.freemium.body':
       'Para garantizar un acceso justo para todos los usuarios, las cuentas gratuitas tienen un límite de uso. Puedes volver a buscar citas en __remainingTime__. Actualiza a Premium para desbloquear todo el potencial de Writefull.',
+    'citations-reviewer.chat.navigation.publications': 'Artículos sugeridos',
+    'citations-reviewer.chat.navigation.custom-search': 'Buscar',
     'citations-reviewer.chat.non-english-error.title':
       'El revisor de citas solo funciona en documentos escritos en inglés',
     'citations-reviewer.chat.non-english-error.body':
@@ -1000,6 +1018,11 @@ const es = {
       'Sí, ejecutar el revisor de citas',
     'citations-reviewer.chat.non-english-error.no':
       'No, volver al menú principal',
+    'paywall.title': 'Has alcanzado tu límite de Overleaf AI',
+    'paywall.body':
+      'Actualiza para acceso ilimitado a todas las funciones de AI o vuelve a intentar el __date__ a las __time__.',
+    'paywall.upgrade': 'Actualizar',
+    'paywall.hide': 'Ocultar por ahora',
   },
 }
 

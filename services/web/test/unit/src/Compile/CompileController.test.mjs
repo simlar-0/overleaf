@@ -42,7 +42,8 @@ describe('CompileController', function () {
     ctx.settings = {
       apis: {
         clsi: {
-          url: 'http://clsi.example.com',
+          url: 'http://clsi.example.com:3013',
+          downloadHost: 'http://clsi.example.com:8080',
           submissionBackendClass: 'c3d',
         },
         clsi_priority: {
@@ -307,10 +308,12 @@ describe('CompileController', function () {
             isAutoCompile: false,
             compileFromClsiCache: true,
             populateClsiCache: true,
+            compileFromHistory: false,
             enablePdfCaching: false,
             fileLineErrors: false,
             stopOnFirstError: false,
             editorId: undefined,
+            rootResourcePath: undefined,
           }
         )
       })
@@ -349,10 +352,12 @@ describe('CompileController', function () {
             isAutoCompile: true,
             compileFromClsiCache: true,
             populateClsiCache: true,
+            compileFromHistory: false,
             enablePdfCaching: false,
             fileLineErrors: false,
             stopOnFirstError: false,
             editorId: undefined,
+            rootResourcePath: undefined,
           }
         )
       })
@@ -372,11 +377,13 @@ describe('CompileController', function () {
             isAutoCompile: false,
             compileFromClsiCache: true,
             populateClsiCache: true,
+            compileFromHistory: false,
             enablePdfCaching: false,
             draft: true,
             fileLineErrors: false,
             stopOnFirstError: false,
             editorId: undefined,
+            rootResourcePath: undefined,
           }
         )
       })
@@ -396,10 +403,36 @@ describe('CompileController', function () {
             isAutoCompile: false,
             compileFromClsiCache: true,
             populateClsiCache: true,
+            compileFromHistory: false,
             enablePdfCaching: false,
             fileLineErrors: false,
             stopOnFirstError: false,
             editorId: 'the-editor-id',
+            rootResourcePath: undefined,
+          }
+        )
+      })
+    })
+    describe('with a rootResourcePath', function () {
+      beforeEach(async function (ctx) {
+        ctx.req.body = { rootResourcePath: 'foo.tex' }
+        await ctx.CompileController.compile(ctx.req, ctx.res, ctx.next)
+      })
+
+      it('should pass the rootResourcePath to the compiler', function (ctx) {
+        ctx.CompileManager.promises.compile.should.have.been.calledWith(
+          ctx.projectId,
+          ctx.user_id,
+          {
+            isAutoCompile: false,
+            compileFromClsiCache: true,
+            populateClsiCache: true,
+            compileFromHistory: false,
+            enablePdfCaching: false,
+            fileLineErrors: false,
+            stopOnFirstError: false,
+            editorId: undefined,
+            rootResourcePath: 'foo.tex',
           }
         )
       })
@@ -776,7 +809,7 @@ describe('CompileController', function () {
 
         it('should open a request to the CLSI', function (ctx) {
           ctx.fetchUtils.fetchStreamWithResponse.should.have.been.calledWith(
-            `${ctx.settings.apis.clsi.url}${ctx.url}?compileGroup=standard&compileBackendClass=c3d&query=foo`
+            `${ctx.settings.apis.clsi.downloadHost}${ctx.url}?compileGroup=standard&compileBackendClass=c3d&query=foo`
           )
         })
 
@@ -806,7 +839,7 @@ describe('CompileController', function () {
 
         it('should open a request to the CLSI', function (ctx) {
           ctx.fetchUtils.fetchStreamWithResponse.should.have.been.calledWith(
-            `${ctx.settings.apis.clsi.url}${ctx.url}?compileGroup=priority&compileBackendClass=c4d`
+            `${ctx.settings.apis.clsi.downloadHost}${ctx.url}?compileGroup=priority&compileBackendClass=c4d`
           )
         })
       })
@@ -826,7 +859,7 @@ describe('CompileController', function () {
             })
           ctx.fetchUtils.fetchStreamWithResponse.rejects(
             new RequestFailedError(
-              `${ctx.settings.apis.clsi.url}${ctx.url}?compileGroup=priority&compileBackendClass=c4d`,
+              `${ctx.settings.apis.clsi.downloadHost}${ctx.url}?compileGroup=priority&compileBackendClass=c4d`,
               { method: 'GET' },
               { status: 404 }
             )
@@ -844,7 +877,7 @@ describe('CompileController', function () {
 
         it('should open a request to the CLSI', function (ctx) {
           ctx.fetchUtils.fetchStreamWithResponse.should.have.been.calledWith(
-            `${ctx.settings.apis.clsi.url}${ctx.url}?compileGroup=priority&compileBackendClass=c4d`
+            `${ctx.settings.apis.clsi.downloadHost}${ctx.url}?compileGroup=priority&compileBackendClass=c4d`
           )
         })
 
@@ -873,7 +906,7 @@ describe('CompileController', function () {
             })
           ctx.fetchUtils.fetchStreamWithResponse.rejects(
             new RequestFailedError(
-              `${ctx.settings.apis.clsi.url}${ctx.url}?compileGroup=priority&compileBackendClass=c4d`,
+              `${ctx.settings.apis.clsi.downloadHost}${ctx.url}?compileGroup=priority&compileBackendClass=c4d`,
               { method: 'GET' },
               { status: 404 }
             )
@@ -891,7 +924,7 @@ describe('CompileController', function () {
 
         it('should open a request to the CLSI', function (ctx) {
           ctx.fetchUtils.fetchStreamWithResponse.should.have.been.calledWith(
-            `${ctx.settings.apis.clsi.url}${ctx.url}?compileGroup=priority&compileBackendClass=c4d`
+            `${ctx.settings.apis.clsi.downloadHost}${ctx.url}?compileGroup=priority&compileBackendClass=c4d`
           )
         })
 
@@ -924,7 +957,7 @@ describe('CompileController', function () {
 
         it('should open a request to the CLSI', function (ctx) {
           ctx.fetchUtils.fetchStreamWithResponse.should.have.been.calledWith(
-            `${ctx.settings.apis.clsi.url}${ctx.url}?compileGroup=standard&compileBackendClass=c3d`
+            `${ctx.settings.apis.clsi.downloadHost}${ctx.url}?compileGroup=standard&compileBackendClass=c3d`
           )
         })
 
@@ -955,7 +988,7 @@ describe('CompileController', function () {
 
         it('should proxy to the standard url', function (ctx) {
           ctx.fetchUtils.fetchStreamWithResponse.should.have.been.calledWith(
-            `${ctx.settings.apis.clsi.url}${ctx.url}?compileGroup=standard&compileBackendClass=c3d`
+            `${ctx.settings.apis.clsi.downloadHost}${ctx.url}?compileGroup=standard&compileBackendClass=c3d`
           )
         })
       })
@@ -982,7 +1015,7 @@ describe('CompileController', function () {
 
         it('should proxy to the standard url without the build parameter', function (ctx) {
           ctx.fetchUtils.fetchStreamWithResponse.should.have.been.calledWith(
-            `${ctx.settings.apis.clsi.url}${ctx.url}?compileGroup=standard&compileBackendClass=c3d`
+            `${ctx.settings.apis.clsi.downloadHost}${ctx.url}?compileGroup=standard&compileBackendClass=c3d`
           )
         })
       })

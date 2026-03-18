@@ -67,6 +67,7 @@ module.exports = {
     },
     clsi: {
       url: 'http://127.0.0.1:23013',
+      downloadHost: 'http://127.0.0.1:23080',
     },
     realTime: {
       url: 'http://127.0.0.1:23026',
@@ -115,6 +116,7 @@ module.exports = {
       compileGroup: 'standard',
       trackChanges: false,
       symbolPalette: false,
+      aiUsageQuota: 'basic',
       aiErrorAssistant: false,
     },
     personal: {
@@ -132,6 +134,7 @@ module.exports = {
       compileGroup: 'standard',
       trackChanges: false,
       symbolPalette: false,
+      aiUsageQuota: 'basic',
       aiErrorAssistant: false,
     },
     collaborator: {
@@ -149,6 +152,7 @@ module.exports = {
       compileGroup: 'priority',
       trackChanges: true,
       symbolPalette: true,
+      aiUsageQuota: 'basic',
       aiErrorAssistant: false,
     },
     professional: {
@@ -166,6 +170,7 @@ module.exports = {
       compileGroup: 'priority',
       trackChanges: true,
       symbolPalette: true,
+      aiUsageQuota: 'basic',
       aiErrorAssistant: false,
     },
   }),

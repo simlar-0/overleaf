@@ -74,6 +74,11 @@ describe('FeaturesUpdater', function () {
       },
       writefull: {
         overleafApiUrl: 'https://www.writefull.com',
+        quotaTierGranted: 'unlimited',
+      },
+      aiFeatures: {
+        freeTrialQuota: 'basic',
+        unlimitedQuota: 'unlimited',
       },
     }
 
@@ -113,10 +118,23 @@ describe('FeaturesUpdater', function () {
     ctx.Modules = {
       promises: { hooks: { fire: sinon.stub().resolves() } },
     }
+    ctx.SubscriptionViewModelBuilder = {
+      promises: {
+        getUsersSubscriptionDetails: sinon.stub().resolves({
+          bestSubscription: { type: 'individual' },
+        }),
+      },
+    }
     ctx.Queues = {
       getQueue: sinon.stub().returns({
         add: sinon.stub().resolves(),
       }),
+    }
+
+    ctx.SplitTestHandler = {
+      promises: {
+        featureFlagEnabledForUser: sinon.stub().resolves(false),
+      },
     }
 
     vi.doMock(
@@ -170,6 +188,13 @@ describe('FeaturesUpdater', function () {
       default: ctx.Modules,
     }))
 
+    vi.doMock(
+      '../../../../app/src/Features/Subscription/SubscriptionViewModelBuilder',
+      () => ({
+        default: ctx.SubscriptionViewModelBuilder,
+      })
+    )
+
     vi.doMock('../../../../app/src/infrastructure/Queues', () => ({
       default: ctx.Queues,
     }))
@@ -179,6 +204,13 @@ describe('FeaturesUpdater', function () {
     vi.doMock('@overleaf/fetch-utils', () => ({
       fetchNothing: sinon.stub().resolves(),
     }))
+
+    vi.doMock(
+      '../../../../app/src/Features/SplitTests/SplitTestHandler',
+      () => ({
+        default: ctx.SplitTestHandler,
+      })
+    )
 
     ctx.FeaturesUpdater = (await import(MODULE_PATH)).default
   })
@@ -309,6 +341,7 @@ describe('FeaturesUpdater', function () {
           default: 'features',
           individual: 'features',
           aiErrorAssistant: true,
+          aiUsageQuota: 'unlimited',
         })
       })
     })
@@ -327,6 +360,7 @@ describe('FeaturesUpdater', function () {
         expect(features).to.deep.equal({
           default: 'features',
           aiErrorAssistant: true,
+          aiUsageQuota: 'unlimited',
         })
       })
     })
@@ -373,6 +407,17 @@ describe('FeaturesUpdater', function () {
         expect(
           ctx.AnalyticsManager.setUserPropertyForUserInBackground
         ).to.have.been.calledWith(ctx.user._id, 'feature-set', 'all')
+      })
+
+      it('should sync features to customer.io', function (ctx) {
+        expect(ctx.Modules.promises.hooks.fire).to.have.been.calledWith(
+          'setUserProperties',
+          ctx.user._id,
+          {
+            features: ctx.Settings.features.all,
+            'best-subscription-type': 'individual',
+          }
+        )
       })
     })
 

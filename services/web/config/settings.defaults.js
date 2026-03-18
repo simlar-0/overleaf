@@ -60,6 +60,9 @@ const defaultTextExtensions = [
   'yml',
   'yaml',
   'lhs',
+  'lean',
+  'lean4',
+  'hs',
   'mk',
   'xmpdata',
   'cfg',
@@ -237,7 +240,9 @@ module.exports = {
     },
     clsi: {
       url: `http://${process.env.CLSI_HOST || '127.0.0.1'}:3013`,
-      // url: "http://#{process.env['CLSI_LB_HOST']}:3014"
+      downloadHost: process.env.CLSI_LB_IP
+        ? `http://${process.env.CLSI_LB_IP}:80`
+        : `http://${process.env.DOWNLOAD_HOST || '127.0.0.1'}:8080`,
       backendGroupName: undefined,
       submissionBackendClass:
         process.env.CLSI_SUBMISSION_BACKEND_CLASS || 'c3d',
@@ -417,6 +422,11 @@ module.exports = {
 
   features: {
     personal: defaultFeatures,
+  },
+
+  aiFeatures: {
+    freeTrialQuota: 'basic',
+    unlimitedQuota: 'unlimited',
   },
 
   groupPlanModalOptions: {
@@ -766,12 +776,7 @@ module.exports = {
   // some basic smoke tests to check the core functionality.
   //
   smokeTest: {
-    user: process.env.SMOKE_TEST_USER,
     userId: process.env.SMOKE_TEST_USER_ID,
-    password: process.env.SMOKE_TEST_PASSWORD,
-    projectId: process.env.SMOKE_TEST_PROJECT_ID,
-    rateLimitSubject: process.env.SMOKE_TEST_RATE_LIMIT_SUBJECT || '127.0.0.1',
-    stepTimeout: parseInt(process.env.SMOKE_TEST_STEP_TIMEOUT || '10000', 10),
   },
 
   appName: process.env.APP_NAME || 'Overleaf (Community Edition)',

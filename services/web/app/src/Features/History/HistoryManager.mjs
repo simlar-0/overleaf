@@ -35,6 +35,10 @@ async function loadGlobalBlobs() {
 
 // END copy from services/history-v1/storage/lib/blob_store/index.js
 
+function isGlobalBlob(hash) {
+  return GLOBAL_BLOBS.has(hash)
+}
+
 function getFilestoreBlobURL(historyId, hash) {
   if (GLOBAL_BLOBS.has(hash)) {
     return `${settings.apis.filestore.url}/history/global/hash/${hash}`
@@ -46,7 +50,7 @@ function getFilestoreBlobURL(historyId, hash) {
 async function initializeProject(projectId) {
   const body = await fetchJson(`${settings.apis.project_history.url}/project`, {
     method: 'POST',
-    json: { historyId: projectId.toString() },
+    json: { historyId: projectId },
   })
   const historyId = body && body.project && body.project.id
   if (!historyId) {
@@ -269,6 +273,15 @@ async function getContentAtVersion(projectId, version) {
 async function getLatestHistory(projectId) {
   const historyId = await getHistoryId(projectId)
 
+  return await getLatestHistoryWithHistoryId(historyId)
+}
+
+/**
+ * Get the latest chunk from history using already resolved historyId
+ *
+ * @param {string} historyId
+ */
+async function getLatestHistoryWithHistoryId(historyId) {
   return await fetchJson(
     `${HISTORY_V1_URL}/projects/${historyId}/latest/history`,
     {
@@ -286,7 +299,17 @@ async function getLatestHistory(projectId) {
  */
 async function getChanges(projectId, opts = {}) {
   const historyId = await getHistoryId(projectId)
+  return await getChangesWithHistoryId(historyId, opts)
+}
 
+/**
+ * Get history changes since a given version and historyId
+ *
+ * @param {string} historyId
+ * @param {object} [opts]
+ * @param {number} [opts.since] - The start version of changes to get
+ */
+async function getChangesWithHistoryId(historyId, opts = {}) {
   const url = new URL(`${HISTORY_V1_URL}/projects/${historyId}/changes`)
   if (opts.since) {
     url.searchParams.set('since', opts.since)
@@ -405,6 +428,7 @@ function _userView(user) {
 const loadGlobalBlobsPromise = loadGlobalBlobs()
 
 export default {
+  isGlobalBlob,
   getFilestoreBlobURL,
   loadGlobalBlobsPromise,
   initializeProject: callbackify(initializeProject),
@@ -435,7 +459,9 @@ export default {
     requestBlobWithProjectId,
     getLatestHistory,
     getChanges,
+    getChangesWithHistoryId,
     getProjectBlobStats,
     getBlobStats,
+    getLatestHistoryWithHistoryId,
   },
 }

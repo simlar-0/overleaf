@@ -40,7 +40,7 @@ function compile(req, res, next) {
           stats,
           timings,
           (error, result) => {
-            let { buildId, outputFiles } = result || {}
+            let { buildId, outputFiles, baseHistoryVersion } = result || {}
             let code, status
             if (outputFiles == null) {
               outputFiles = []
@@ -50,7 +50,7 @@ function compile(req, res, next) {
               status = 'compile-in-progress'
             } else if (error instanceof Errors.FilesOutOfSyncError) {
               code = 409 // Http 409 Conflict
-              status = 'retry'
+              status = 'conflict'
               logger.warn(
                 {
                   projectId: request.project_id,
@@ -58,6 +58,10 @@ function compile(req, res, next) {
                 },
                 'files out of sync, please retry'
               )
+            } else if (error instanceof Errors.MissingUpdatesError) {
+              code = 409
+              status = 'missing-updates'
+              baseHistoryVersion = error.info.baseHistoryVersion
             } else if (
               error?.code === 'EPIPE' ||
               error instanceof Errors.TooManyCompileRequestsError
@@ -146,6 +150,7 @@ function compile(req, res, next) {
               compile: {
                 status,
                 error: error?.message || error,
+                baseHistoryVersion,
                 stats,
                 timings,
                 buildId,
@@ -153,7 +158,7 @@ function compile(req, res, next) {
                 outputUrlPrefix: Settings.apis.clsi.outputUrlPrefix,
                 outputFiles: outputFiles.map(file => ({
                   url:
-                    `${Settings.apis.clsi.url}/project/${request.project_id}` +
+                    `${Settings.apis.clsi.downloadHost}/project/${request.project_id}` +
                     (request.user_id != null
                       ? `/user/${request.user_id}`
                       : '') +
